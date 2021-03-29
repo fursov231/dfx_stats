@@ -1,7 +1,7 @@
 import ReactTable from 'react-table-6' // React-table
 import {useState, useEffect} from 'react' // State storage for calculations
 
-export default function COMPDistributionCalculator(props) {
+export default function Transaction(props) {
     // Initialize distribution input state holder
     const [distribution, setDistribution] = useState({
         "supply": {
@@ -43,7 +43,7 @@ export default function COMPDistributionCalculator(props) {
     function updateDistribution(type, symbol, value) {
         let opposite = {...distribution[type === 'supply' ? 'borrow' : 'supply']};
         let existing = {...distribution[type === 'supply' ? 'supply' : 'borrow']}
-        
+
         // Mutate object depending on input field
         setDistribution({
             [type === 'supply' ? 'borrow' : 'supply']: {
@@ -56,107 +56,27 @@ export default function COMPDistributionCalculator(props) {
         });
     }
 
-    // Calculate COMP distribution
-    function calculateValues() {
-        let comp_earned = 0; // Total COMP Earned
-        let int_earned = 0; // Earned interest
-        let int_paid = 0; // Paid interest
-        let sum_amount = 0; // Sum of supplied or borrowed
 
-        // Loop through supplied tokens
-        for (var key in distribution.supply) {
-            // If supplied value > $0
-            if (parseFloat(distribution.supply[key]) > 0) {
-                // Loop through Compound-supported tokens
-                for (let i = 0; i < props.data.length; i++) {
-                    // Search for matching token and increment values
-                    if (props.data[i].symbol === key) {
-                        int_earned += parseFloat(distribution.supply[key]) * (parseFloat(props.data[i].supply_apy) / 100);
-                        comp_earned += (parseFloat(distribution.supply[key]) / props.data[i].gross_supply) * props.data[i].comp_allocation;
-                        sum_amount += parseFloat(distribution.supply[key]);
-                    }
-                }
-            }
-        }
-
-        // Loop through borrowed tokens
-        for (var key in distribution.borrow) {
-            // If borrowed value > $0
-            if (parseFloat(distribution.borrow[key]) > 0) {
-                // Loop through Compound-supported tokens
-                for (let i = 0; i < props.data.length; i++) {
-                    // Search for matching tokens and increment values
-                    if (props.data[i].symbol === key) {
-                        int_paid += parseFloat(distribution.borrow[key]) * (parseFloat(props.data[i].borrow_apy) / 100);
-                        comp_earned += (parseFloat(distribution.borrow[key]) / props.data[i].gross_borrow) * props.data[i].comp_allocation;
-                        sum_amount += parseFloat(distribution.borrow[key]);
-                    }
-                }
-            }
-        }
-
-        // Net earnings calculations
-        let net_earnings = (comp_earned * props.price) + int_earned - int_paid;
-
-        // Update state with appropriate calculations
-        set_comp_earned(Number(comp_earned.toFixed(2)));
-        set_comp_earned_usd(Number((comp_earned * props.price).toFixed(2)));
-        set_interest_earned(Number(int_earned.toFixed(2)));
-        set_interest_paid(Number(int_paid.toFixed(2)));
-        set_net_earnings(Number(net_earnings.toFixed(2)));
-        set_net_apy(((net_earnings / sum_amount) * 100).toFixed(2));
-    }
 
     // React-table setup
     const columns = [
-        {Header: 'Market', Accessor: 'image', Cell: row => <MarketItem {...row.original} />},
-        {Header: 'Gross Supply', Accessor: 'gross_supply', Cell: row => <FormatItem {...row.original} type="supply" />},
-        {Header: 'Supply APY', Accessor: 'supply_apy', Cell: row => <FormatItemAPY {...row.original} type="supply" />},
-        {Header: '$ Supplied', Accessor: 'gross_supply', Cell: row => <CalcCell {...row.original} type="supply" updateDistribution={updateDistribution} distribution={distribution}/>},
-        {Header: 'Gross Borrow', Accessor: 'gross_borrow', Cell: row => <FormatItem {...row.original} />},
-        {Header: 'Borrow APY', Accessor: 'borrow_apy', Cell: row => <FormatItemAPY {...row.original} />},
-        {Header: '$ Borrowed', Accessor: 'gross_borrow', Cell: row => <CalcCell {...row.original} updateDistribution={updateDistribution} distribution={distribution} />},
+        {Header: 'Хэш транзакции', Accessor: 'image', Cell: row => <MarketItem {...row.original} />},
+        {Header: 'Время', Accessor: 'gross_supply', Cell: row => <FormatItem {...row.original} type="supply" />},
+        {Header: 'Адрес отправителя', Accessor: 'supply_apy', Cell: row => <FormatItemAPY {...row.original} type="supply" />},
+        {Header: 'Адрес получателя', Accessor: 'gross_supply', Cell: row => <CalcCell {...row.original} type="supply" updateDistribution={updateDistribution} distribution={distribution}/>},
+        {Header: 'Комиссия', Accessor: 'gross_borrow', Cell: row => <FormatItem {...row.original} />},
     ];
-
     return (
         <>
             <ReactTable
                 data={props.data}
-                columns={columns} 
+                columns={columns}
                 showPagination={false}
                 defaultPageSize={props.data.length}
                 resizable={false}
                 className="comp-table"
             />
-            <div className="token-distribution">
-                <span>Calculated token distribution</span>
-                <br />
-                <br />
-                <div>
-                    <label htmlFor="comp-earned">COMP Earned</label>
-                    <input id="comp-earned" value={comp_earned.toLocaleString()} placeholder="0" readOnly/>
-                </div>
-                <div>
-                    <label htmlFor="comp-earned-usd">COMP Earned (USD)</label>
-                    <input id="comp-earned-usd" value={"$" + comp_earned_usd.toLocaleString()} placeholder="$0" readOnly/>
-                </div>
-                <div>
-                    <label htmlFor="interest-earned">Interest Earned</label>
-                    <input id="interest-earned" value={"$" + interest_earned.toLocaleString()} placeholder="$0" readOnly/>
-                </div>
-                <div>
-                    <label htmlFor="interest-paid">Interest Paid</label>
-                    <input id="interest-paid" value={"$" + interest_paid.toLocaleString()} placeholder="$0" readOnly/>
-                </div>
-                <div>
-                    <label htmlFor="net-earnings">Net Earnings</label>
-                    <input id="net-earnings" value={"$" + net_earnings.toLocaleString()} placeholder="$0" readOnly/>
-                </div>
-                <div>
-                    <label htmlFor="net-apy">Net APY</label>
-                    <input id="net-apy" value={isNaN(net_apy) ? '0%' : net_apy.toLocaleString() + "%"} placeholder="0%" readOnly/>
-                </div>
-            </div>
+
             <style global jsx>{`
             .token-distribution {
                 width: calc(100% - 80px);
@@ -253,6 +173,7 @@ export default function COMPDistributionCalculator(props) {
             `}</style>
         </>
     )
+
 }
 
 // Market image + symbol + name cell formatting
@@ -348,7 +269,7 @@ function FormatItem(props) {
                 color: rgb(214, 2, 44);
                 font-size: 14px;
             }
-            `}</style> 
+            `}</style>
         </>
     )
 }
@@ -358,7 +279,7 @@ function FormatItemAPY(props) {
     return(
         <>
             <div className="format-item">
-                <span>{props.type === 'supply' ? props.supply_apy : props.borrow_apy}%</span>
+                <span>{props.data_transaction.hash}%</span>
                 <br />
                 {props.type === 'supply' ? (
                     props.supply_apy_change > 0 ? (
@@ -393,7 +314,7 @@ function FormatItemAPY(props) {
                 color: rgb(214, 2, 44);
                 font-size: 14px;
             }
-            `}</style> 
+            `}</style>
         </>
     )
 }
