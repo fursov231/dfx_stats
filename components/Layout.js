@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 export default function Layout({ children }) {
-    const router = useRouter() // Existing setup for active links (potentially for when including more than just Compound data)
+    const router = useRouter()
 
     return(
         <main>
@@ -11,31 +11,18 @@ export default function Layout({ children }) {
                 <link rel="icon" href="/favicon.ico" />
                 <link rel="preload" href="/fonts/OpenSans-Regular.ttf" as="font" crossOrigin="" />
                 <link rel="preload" href="/fonts/OpenSans-Bold.ttf" as="font" crossOrigin="" />
-                <meta name="description" content="Stat.Farm is your one-stop shop for COMP data and calculations. Like a good neighbour, Stat.Farm is there." />
-                <meta property="og:type" content="website" />
-                <meta name="og:title" property="og:title" content="Stat.Farm | COMP Data and Calculator" />
-                <meta name="og:description" property="og:description" content="Stat.Farm is your one-stop shop for COMP data and calculations. Like a good neighbour, Stat.Farm is there." />
-                <meta property="og:site_name" content="Stat.Farm" />
-                <meta property="og:url" content="https://stat.farm" />  
-                <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="Stat.Farm | COMP Data and Calculator" />
-                <meta name="twitter:description" content="Stat.Farm is your one-stop shop for COMP data and calculations. Like a good neighbour, Stat.Farm is there." />
-                <meta name="twitter:site" content="https://stat.farm" />
-                <meta name="twitter:creator" content="https://twitter.com/_anishagnihotri" />
-                <link rel="apple-touch-icon" href="/favicon.ico" />
-                <meta property="og:image" content="https://stat.farm/metaimage.png" />
-                <meta name="twitter:image" content="https://stat.farm/metaimage.png" />
+
             </Head>
             <div className="header">
                 <div className="sizer">
                     <div className="logo">
                         <Link href="/"><a>
-                            <img src="/logo.png" alt="StatFarm logo" />
+                            <img src="/logo.svg" alt="DFX logo" />
                         </a></Link>
                     </div>
                     <div className="nav">
                         <ul>
-                            <li className={router.pathname === '/' ? 'active' : ''}><Link href="/"><a>Compound</a></Link></li>
+                            <li className={router.pathname === '/' ? 'active' : ''}><Link href="/"><a></a></Link></li>
                         </ul>
                     </div>
                 </div>
@@ -46,7 +33,7 @@ export default function Layout({ children }) {
                 </div>
             </div>
             <div className="footer">
-                <span>A side project by <a href="https://anishagnihotri.com">Anish Agnihotri</a>.</span>
+                <span>Defirex</span>
             </div>
 
             <style global jsx>{`

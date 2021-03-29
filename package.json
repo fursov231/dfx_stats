@@ -1,5 +1,5 @@
 {
-  "name": "stat.farm",
+  "name": "dfx_stats",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "axios": "^0.19.2",
-    "chart.js": "^2.9.3",
+    "axios": "^0.21.1",
+    "bsc-scan": "^1.1.0",
+    "coinmarketcap-api": "^3.1.1",
     "moment": "^2.27.0",
     "next": "9.4.4",
     "react": "16.13.1",
